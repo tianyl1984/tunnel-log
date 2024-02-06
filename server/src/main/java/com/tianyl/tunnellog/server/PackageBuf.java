@@ -82,7 +82,54 @@ public abstract class PackageBuf {
         }
     }
 
-    public abstract byte[] takePackage() throws InterruptedException;
+    public byte[] takePackage() throws InterruptedException {
+        final int c;
+        final byte[] result;
+        final AtomicInteger count = this.count;
+        final ReentrantLock takeLock = this.takeLock;
+        takeLock.lockInterruptibly();
+        try {
+            // 为空时等待写入
+            while (count.get() == 0) {
+                if (stop.get()) {
+                    return null;
+                }
+                notEmpty.await();
+            }
+            int takeCnt = 0;
+            while (true) {
+                if (stop.get()) {
+                    return null;
+                }
+                int cnt = count.get();
+                takeCnt = tryToTake(cnt);
+                if (takeCnt == 0) {
+                    notEmpty.await();
+                } else {
+                    break;
+                }
+            }
+            result = new byte[takeCnt];
+            // 复制结果
+            System.arraycopy(data, 0, result, 0, result.length);
+            // 释放data
+            byte[] newData = new byte[capacity];
+            System.arraycopy(data, result.length, newData, 0, capacity - result.length);
+            data = newData;
+//            ChannelUtil.print("takePackage before:" + count.get() + ",result:" + result.length);
+            c = count.getAndAdd(-result.length);
+//            ChannelUtil.print("takePackage after:" + count.get());
+            if (c > 1) {
+                notEmpty.signal();
+            }
+        } finally {
+            takeLock.unlock();
+        }
+        signalNotFull();
+        return result;
+    }
+
+    public abstract int tryToTake(int cnt);
 
     public abstract String parseData(byte[] data);
 }
