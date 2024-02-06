@@ -11,7 +11,7 @@ public class LoggingHandler extends ChannelDuplexHandler {
 
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-        PackageBuf buf = new Mysql57PackageBuf(10 * 1024);
+        PackageBuf buf = new Mysql57PackageBuf();
         ctx.channel().attr(PackageBuf.ATTRIBUTE).set(buf);
         ctx.fireChannelRegistered();
     }

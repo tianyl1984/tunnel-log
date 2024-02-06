@@ -6,17 +6,17 @@ import java.util.Date;
 
 public class Mysql57PackageBuf extends PackageBuf {
 
-    public Mysql57PackageBuf(int capacity) {
-        super(capacity);
+    public Mysql57PackageBuf() {
+        super();
     }
 
     public int tryToTake(int cnt) {
         if (cnt < 3) {
             return 0;
         }
-        byte b1 = data[0];
-        byte b2 = data[1];
-        byte b3 = data[2];
+        byte b1 = getData(0);
+        byte b2 = getData(1);
+        byte b3 = getData(2);
         int length = ((b3 & 0xFF) << 16) | ((b2 & 0xFF) << 8) | (b1 & 0xFF);
         if (cnt < length + 4) {
             return 0;
