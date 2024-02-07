@@ -27,6 +27,7 @@ public class TunnelLogServer {
         int remotePort = 3306;
 //        String remoteHost = "k3s.local.com";
 //        int remotePort = 30306;
+        remotePort= 8700;
         ServerBootstrap bootstrap = new ServerBootstrap();
         bootstrap.group(serverBossGroup, serverWorkerGroup)
                 .channel(NioServerSocketChannel.class)

@@ -11,7 +11,8 @@ public class LoggingHandler extends ChannelDuplexHandler {
 
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-        PackageBuf buf = new Mysql57PackageBuf();
+//        PackageBuf buf = new Mysql57PackageBuf();
+        PackageBuf buf = new RedisPackageBuf();
         ctx.channel().attr(PackageBuf.ATTRIBUTE).set(buf);
         ctx.fireChannelRegistered();
     }

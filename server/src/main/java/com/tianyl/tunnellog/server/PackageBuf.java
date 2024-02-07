@@ -53,6 +53,14 @@ public abstract class PackageBuf {
         return data.get(idx);
     }
 
+    public byte[] getDatas(int size) {
+        byte[] bs = new byte[size];
+        for (int i = 0; i < size; i++) {
+            bs[i] = data.get(i);
+        }
+        return bs;
+    }
+
     public byte[] takePackage() throws InterruptedException {
         final int c;
         final byte[] result;
